@@ -1,0 +1,102 @@
+class Student:
+    def __init__(self, name, surname, gender):
+        self.name = name
+        self.surname = surname
+        self.gender = gender
+        self.finished_courses = []
+        self.courses_in_progress = []
+        self.grades = {}
+
+    def add_courses(self, course_name):
+        self.finished_courses.append(course_name)
+
+    def rate_hw(self, lecturer, course, grade):
+        if isinstance(lecturer,
+                      Lecturer) and course in self.courses_in_progress and course in lecturer.courses_attached:
+            if course in lecturer.grades:
+                lecturer.grades[course] += [grade]
+            else:
+                lecturer.grades[course] = [grade]
+        else:
+            return 'Ошибка'
+
+    def srgr(self):
+        if not self.grades:
+            return 0
+        spisok = []
+        for k in self.grades.values():
+            spisok.extent(k)
+        return float(sum(spisok) / len(spisok), 1)
+
+
+    def __str__(self):
+        out_string = f'Имя: {self.name}\nФамилмя: {self.surname}\n'
+        out_string += f'Средняя оценка за домашнее задания: {self.get_average_score()}\n'
+        out_string += f'Курсы в процессе изучения: {", ".join(self.courses_in_progress)}\n'
+        out_string += f'Завершенные курсы: {", ".join(self.finished_cjurses)}\n'
+        return out_string
+
+
+class Mentor:
+    def __init__(self, name, surname):
+        self.name = name
+        self.surname = surname
+        self.courses_attached = []
+
+
+class Lecturer(Mentor):
+    def __init__(self, name, surname):
+        super().__init__(name, surname)
+        self.grades = {}
+
+    def srgr(self):
+        grades_count = 0
+        if not self.grades:
+            return 0
+        spisok = []
+        for k in self.grades.values():
+            grades_count += len(self.grades[k])
+            spisok.extent(k)
+        return round(sum(spisok) / (len(spisok), 2))
+
+    def __str__(self):
+        res = f'Имя: {self.name}\nФамилия: {self.surname}\nСредняя оценка за лекции: {self.srgr()}'
+        return res
+
+
+class Reviewer(Mentor):
+    def rate_hw(self, student, course, grade):
+        if isinstance(student, Student) and course in self.courses_attached and course in student.courses_in_progress:
+            if course in student.grades:
+                student.grades[course] += [grade]
+            else:
+                student.grades[course] = [grade]
+        else:
+            return 'Ошибка'
+
+    def __str__(self):
+        res = f'Имя: {self.name}\nФамилия: {self.surname}'
+        return res
+
+
+best_student = Student('Ruoy', 'Eman', 'your_gender')
+best_student.finished_courses += ['Git']
+best_student.finished_courses += ['Python']
+best_student.courses_in_progress += ['Python']
+best_student.courses_in_progress += ['Git']
+best_student.grades['Git'] = [10, 10, 10, 10, 10]
+best_student.grades['Python'] = [10, 10]
+
+print(best_student.finished_courses)
+print(best_student.courses_in_progress)
+print(best_student.grades)
+
+reviewer = Reviewer('Some', 'Buddy')
+reviewer.courses_attached += ['Python']
+reviewer.courses_attached += ['Git']
+reviewer.rate_hw(best_student, 'Git', 10)
+reviewer.rate_hw(best_student, 'Python', 10)
+
+# print(best_student.srgr)
+print(reviewer.courses_attached)
+print(reviewer.rate_hw)
